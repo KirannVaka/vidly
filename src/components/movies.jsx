@@ -13,7 +13,10 @@ function Movies() {
 
   return (
     <React.Fragment>
-      <h1>Showing {movies.length} movies in database.</h1>
+      {movies.length > 0 && (
+        <h1> Showing {movies.length} movies in database.</h1>
+      )}
+      {movies.length === 0 && <h1>There are no movies in DB</h1>}
       <table className="table">
         <thead>
           <tr>
