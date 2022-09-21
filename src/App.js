@@ -1,10 +1,11 @@
+import React, {useState} from 'react';
 import './App.css';
-import * as moviesAPI from "./services/fakeMovieService";
+import Movies from './components/movies';
 
-function App() {
+function App(props) {
   return (
     <main className="container">
-      <h1>Hello World</h1>
+      <Movies />
     </main>
   );
 }
