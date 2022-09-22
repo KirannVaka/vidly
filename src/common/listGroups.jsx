@@ -1,23 +1,31 @@
 import React, { Component } from "react";
 import _ from "lodash";
 
-const ListGroups = (props) => {
-  const { items, onItemSelect } = props;
-  console.log(items);
+const ListGroup = (props) => {
+  const { items, onItemSelect, valueProperty, tetxProperty, selectedItem } =
+    props;
+
   return (
     <ul className="list-group">
       {items.map((item) => (
         <li
-          key={item.name}
+          key={item[valueProperty]}
           style={{ cursor: "pointer" }}
-          className="list-group-item"
-          onClick={() => onItemSelect(item.name)}
+          className={
+            item == selectedItem ? "list-group-item active" : "list-group-item"
+          }
+          onClick={() => onItemSelect(item)}
         >
-          {item.name}
+          {item[tetxProperty]}
         </li>
       ))}
     </ul>
   );
 };
 
-export default ListGroups;
+ListGroup.defaultProps = {
+  tetxProperty: "name",
+  valueProperty: "_id",
+};
+
+export default ListGroup;

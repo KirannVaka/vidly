@@ -5,7 +5,7 @@ import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
 import Pagination from "../common/pagination";
 import { paginate } from "../utils/paginate";
 import { getGenres } from "../services/fakeGenreService";
-import ListGroups from "../common/listGroups";
+import ListGroup from "../common/listGroups";
 import React, { Component } from "react";
 
 class Movies extends Component {
@@ -14,6 +14,7 @@ class Movies extends Component {
     genres: [],
     pageSize: 4,
     currentPage: 1,
+    selectedGenre: "all",
   };
 
   componentDidMount() {
@@ -30,7 +31,9 @@ class Movies extends Component {
   };
 
   handleGenreSelect = (genre) => {
-    console.log(genre);
+    this.setState({
+      selectedGenre: genre,
+    });
   };
 
   handleLike = (movie) => {
@@ -50,7 +53,7 @@ class Movies extends Component {
   };
 
   render() {
-    const { movies, genres, pageSize, currentPage } = this.state;
+    const { movies, genres, pageSize, currentPage, selectedGenre } = this.state;
 
     const moviesPaginated = paginate(movies, currentPage, pageSize);
 
@@ -58,8 +61,12 @@ class Movies extends Component {
 
     return (
       <div className="row">
-        <div className="col-2">
-          <ListGroups items={genres} onItemSelect={this.handleGenreSelect} />
+        <div className="col-3">
+          <ListGroup
+            items={genres}
+            onItemSelect={this.handleGenreSelect}
+            selectedItem={selectedGenre}
+          />
         </div>
         <div className="col">
           {movies.length > 0 && (
