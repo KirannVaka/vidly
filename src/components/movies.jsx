@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
 import Pagination from "../common/Pagination";
+import { paginate } from "../utils/paginate";
 
 function Movies() {
   const [movies, setMovies] = useState(getMovies());
@@ -29,6 +30,8 @@ function Movies() {
     setCurrentPage(page);
   };
 
+  const moviesPaginated = paginate(movies, currentPage, pageSize);
+
   if (movies.length === 0) {
     return <h1>There are no movies in DB</h1>;
   } else {
@@ -48,7 +51,7 @@ function Movies() {
             </tr>
           </thead>
           <tbody>
-            {movies.map((movie) => (
+            {moviesPaginated.map((movie) => (
               <tr key={movie.id + movie.title}>
                 <td key={movie.title}>{movie.title}</td>
                 <td key={movie.id + movie.genre}>{movie.genre.name}</td>
