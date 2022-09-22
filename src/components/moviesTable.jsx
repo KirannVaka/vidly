@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
-import TableHeader from "../common/tableHeader";
-import TableBody from "../common/tableBody";
+
+import Table from "../common/table";
 
 class MoviesTable extends Component {
   columns = [
@@ -16,7 +16,7 @@ class MoviesTable extends Component {
       content: (movie) => (
         <span onClick={() => this.props.onLike(movie)}>
           <FontAwesomeIcon
-            style={{ cursor: "pointer" }}
+            className="clickable"
             icon={movie.movieLiked === true ? faSHeart : faRHeart}
           />
         </span>
@@ -39,23 +39,13 @@ class MoviesTable extends Component {
   render() {
     const { moviesPaginated, onSort, sortColumn } = this.props;
 
-    if (moviesPaginated.length === 0) return <h1>There are no movies in DB</h1>;
-
     return (
-      <div>
-        {moviesPaginated.length > 0 && (
-          <h1> Showing {moviesPaginated.length} movies in database.</h1>
-        )}
-
-        <table className="table">
-          <TableHeader
-            columns={this.columns}
-            onSort={onSort}
-            sortColumn={sortColumn}
-          />
-          <TableBody data={moviesPaginated} columns={this.columns} />
-        </table>
-      </div>
+      <Table
+        data={moviesPaginated}
+        onSort={onSort}
+        sortColumn={sortColumn}
+        columns={this.columns}
+      />
     );
   }
 }

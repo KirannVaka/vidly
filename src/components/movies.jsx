@@ -53,6 +53,28 @@ class Movies extends Component {
     });
   };
 
+  getPagedData = () => {
+    const {
+      movies: allMovies,
+      genres,
+      sortColumn,
+      pageSize,
+      currentPage,
+      selectedGenre,
+    } = this.state;
+
+    const filtered =
+      selectedGenre && selectedGenre._id
+        ? allMovies.filter((movie) => movie.genre._id === selectedGenre._id)
+        : allMovies;
+
+    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+
+    const moviesPaginated = paginate(sorted, currentPage, pageSize);
+
+    return { totalCount: filtered.length, data: moviesPaginated };
+  };
+
   handlePageChange = (page) => {
     this.setState({
       currentPage: page,
@@ -60,19 +82,12 @@ class Movies extends Component {
   };
 
   render() {
-    const { movies, genres, sortColumn, pageSize, currentPage, selectedGenre } =
+    const { genres, sortColumn, pageSize, currentPage, selectedGenre } =
       this.state;
 
-    const filtered =
-      selectedGenre && selectedGenre._id
-        ? movies.filter((movie) => movie.genre._id === selectedGenre._id)
-        : movies;
+    const { totalCount, data: movies } = this.getPagedData();
 
-    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
-
-    const moviesPaginated = paginate(sorted, currentPage, pageSize);
-
-    if (movies.length === 0) return <h1>There are no movies in DB</h1>;
+    if (totalCount === 0) return <p>There are no movies in DB</p>;
 
     return (
       <div className="row">
@@ -84,15 +99,16 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
+          <h4> Showing {totalCount} movies in database.</h4>;
           <MoviesTable
-            moviesPaginated={moviesPaginated}
+            moviesPaginated={movies}
             onDelete={this.handleDelete}
             onLike={this.handleLike}
             onSort={this.handleSort}
             sortColumn={sortColumn}
           />
           <Pagination
-            totalItems={filtered.length}
+            totalItems={totalCount}
             pageSize={pageSize}
             onPgaeChange={this.handlePageChange}
             currentPage={currentPage}
