@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
 import TableHeader from "../common/tableHeader";
+import TableBody from "../common/tableBody";
 
 class MoviesTable extends Component {
   columns = [
@@ -10,12 +11,33 @@ class MoviesTable extends Component {
     { path: "genre.name", label: "Genre" },
     { path: "numberInStock", label: "Stock" },
     { path: "dailyRentalRate", label: "Rate" },
-    { path: "like" },
-    { path: "delete" },
+    {
+      key: "like",
+      content: (movie) => (
+        <span onClick={() => this.props.onLike(movie)}>
+          <FontAwesomeIcon
+            style={{ cursor: "pointer" }}
+            icon={movie.movieLiked === true ? faSHeart : faRHeart}
+          />
+        </span>
+      ),
+    },
+    {
+      key: "delete",
+      content: (movie) => (
+        <button
+          key={movie._id}
+          onClick={() => this.props.onDelete(movie._id)}
+          className="btn btn-danger"
+        >
+          Delete
+        </button>
+      ),
+    },
   ];
+
   render() {
-    const { moviesPaginated, onLike, onDelete, onSort, sortColumn } =
-      this.props;
+    const { moviesPaginated, onSort, sortColumn } = this.props;
 
     if (moviesPaginated.length === 0) return <h1>There are no movies in DB</h1>;
 
@@ -31,33 +53,7 @@ class MoviesTable extends Component {
             onSort={onSort}
             sortColumn={sortColumn}
           />
-          <tbody>
-            {moviesPaginated.map((movie) => (
-              <tr key={movie.id + movie.title}>
-                <td key={movie.title}>{movie.title}</td>
-                <td key={movie.id + movie.genre}>{movie.genre.name}</td>
-                <td>{movie.numberInStock}</td>
-                <td key={movie.id}>{movie.dailyRentalRate}</td>
-                <td>
-                  <span onClick={() => onLike(movie)}>
-                    <FontAwesomeIcon
-                      style={{ cursor: "pointer" }}
-                      icon={movie.movieLiked === true ? faSHeart : faRHeart}
-                    />
-                  </span>
-                </td>
-                <td key={movie.id}>
-                  <button
-                    key={movie._id}
-                    onClick={() => onDelete(movie._id)}
-                    className="btn btn-danger"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          <TableBody data={moviesPaginated} columns={this.columns} />
         </table>
       </div>
     );
