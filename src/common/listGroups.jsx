@@ -9,7 +9,7 @@ const ListGroup = (props) => {
     <ul className="list-group">
       {items.map((item) => (
         <li
-          key={item[valueProperty] ? item[valueProperty] : "all"}
+          key={item[valueProperty]}
           style={{ cursor: "pointer" }}
           className={
             item == selectedItem ? "list-group-item active" : "list-group-item"

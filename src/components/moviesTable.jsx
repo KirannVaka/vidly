@@ -4,7 +4,7 @@ import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
 
 const MoviesTable = (props) => {
-  const { movies, count, moviesPaginated, onLike, onDelete } = props;
+  const { movies, count, moviesPaginated, onSort, onLike, onDelete } = props;
 
   if (movies.length === 0) return <h1>There are no movies in DB</h1>;
 
@@ -15,10 +15,18 @@ const MoviesTable = (props) => {
       <table className="table">
         <thead>
           <tr>
-            <th scope="col">Title</th>
-            <th scope="col">Genre</th>
-            <th scope="col">Stock</th>
-            <th scope="col">Rate</th>
+            <th onClick={() => onSort("title")} scope="col">
+              Title
+            </th>
+            <th onClick={() => onSort("genre.name")} scope="col">
+              Genre
+            </th>
+            <th onClick={() => onSort("numberInStock")} scope="col">
+              Stock
+            </th>
+            <th onClick={() => onSort("dailyRentalRate")} scope="col">
+              Rate
+            </th>
           </tr>
         </thead>
         <tbody>
