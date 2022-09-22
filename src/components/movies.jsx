@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import { getMovies } from "../services/fakeMovieService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
+import { hover } from "@testing-library/user-event/dist/hover";
 
 function Movies() {
   const [movies, setMovies] = useState(getMovies());
@@ -8,6 +12,14 @@ function Movies() {
     let movieInDb = movies.find((m) => m._id === id);
     let tempMovies = [...movies];
     tempMovies.splice(movies.indexOf(movieInDb), 1);
+    setMovies(tempMovies);
+  };
+
+  const handleLike = (movie) => {
+    const tempMovies = [...movies];
+    const index = tempMovies.indexOf(movie);
+    // tempMovies[index] = { ...tempMovies[index] };
+    tempMovies[index].movieLiked = !tempMovies[index].movieLiked;
     setMovies(tempMovies);
   };
 
@@ -36,6 +48,14 @@ function Movies() {
                 <td key={movie.id + movie.genre}>{movie.genre.name}</td>
                 <td>{movie.numberInStock}</td>
                 <td key={movie.id}>{movie.dailyRentalRate}</td>
+                <td>
+                  <span onClick={() => handleLike(movie)}>
+                    <FontAwesomeIcon
+                      style={{ cursor: "pointer" }}
+                      icon={movie.movieLiked == true ? faSHeart : faRHeart}
+                    />
+                  </span>
+                </td>
                 <td key={movie.id}>
                   <button
                     key={movie._id}
