@@ -1,103 +1,114 @@
-import React, { useState } from "react";
 import { getMovies } from "../services/fakeMovieService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
 import Pagination from "../common/pagination";
 import { paginate } from "../utils/paginate";
+import { genres, getGenres } from "../services/fakeGenreService";
 import ListGroups from "../common/listGroups";
+import React, { Component } from "react";
 
-function Movies() {
-  const [movies, setMovies] = useState(getMovies());
-  const [pageSize, setPageSize] = useState(4);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const handleDelete = (id) => {
-    let movieInDb = movies.find((m) => m._id === id);
-    let tempMovies = [...movies];
-    tempMovies.splice(movies.indexOf(movieInDb), 1);
-    setMovies(tempMovies);
+class Movies extends Component {
+  state = {
+    movies: getMovies(),
+    genres: [],
+    pageSize: 4,
+    currentPage: 1,
   };
 
-  const handleLike = (movie) => {
-    const tempMovies = [...movies];
-    const index = tempMovies.indexOf(movie);
-    // tempMovies[index] = { ...tempMovies[index] };
-    tempMovies[index].movieLiked = !tempMovies[index].movieLiked;
-    setMovies(tempMovies);
+  handleDelete = (id) => {
+    let movie = this.state.movies.find((m) => m._id === id);
+    let movies = [...this.state.movies];
+    movies.splice(movies.indexOf(movie), 1);
+    this.setState({
+      movies,
+    });
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  handleGenreSelect = (genre) => {
+    return null;
   };
 
-  const moviesPaginated = paginate(movies, currentPage, pageSize);
+  handleLike = (movie) => {
+    const movies = [...this.state.movies];
+    const index = movies.indexOf(movie);
+    movies[index] = { ...movies[index] };
+    movies[index].movieLiked = !movies[index].movieLiked;
+    this.setState({
+      movies,
+    });
+  };
 
-  if (movies.length === 0) {
-    return <h1>There are no movies in DB</h1>;
-  } else {
+  handlePageChange = (page) => {
+    this.setState({
+      currentPage: page,
+    });
+  };
+
+  render() {
+    const { movies, handleGenreSelect, genres, pageSize, currentPage } =
+      this.state;
+
+    const moviesPaginated = paginate(movies, currentPage, pageSize);
+
+    if (movies.length === 0) return <h1>There are no movies in DB</h1>;
     return (
-      <React.Fragment>
-        <ListGroups />
-        {movies.length > 0 && (
-          <h1> Showing {movies.length} movies in database.</h1>
-        )}
+      <div className="row">
+        <div className="col-2">
+          <ListGroups items={genres} onGenreSelect={handleGenreSelect} />
+        </div>
+        <div className="col">
+          {movies.length > 0 && (
+            <h1> Showing {movies.length} movies in database.</h1>
+          )}
 
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Title</th>
-              <th scope="col">Genre</th>
-              <th scope="col">Stock</th>
-              <th scope="col">Rate</th>
-            </tr>
-          </thead>
-          <tbody>
-            {moviesPaginated.map((movie) => (
-              <tr key={movie.id + movie.title}>
-                <td key={movie.title}>{movie.title}</td>
-                <td key={movie.id + movie.genre}>{movie.genre.name}</td>
-                <td>{movie.numberInStock}</td>
-                <td key={movie.id}>{movie.dailyRentalRate}</td>
-                <td>
-                  <span onClick={() => handleLike(movie)}>
-                    <FontAwesomeIcon
-                      style={{ cursor: "pointer" }}
-                      icon={movie.movieLiked === true ? faSHeart : faRHeart}
-                    />
-                  </span>
-                </td>
-                <td key={movie.id}>
-                  <button
-                    key={movie._id}
-                    onClick={() => handleDelete(movie._id)}
-                    className="btn btn-danger"
-                  >
-                    Delete
-                  </button>
-                </td>
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Genre</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Rate</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <Pagination
-          totalItems={movies.length}
-          pageSize={pageSize}
-          onPgaeChange={handlePageChange}
-          currentPage={currentPage}
-        />
-      </React.Fragment>
+            </thead>
+            <tbody>
+              {moviesPaginated.map((movie) => (
+                <tr key={movie.id + movie.title}>
+                  <td key={movie.title}>{movie.title}</td>
+                  <td key={movie.id + movie.genre}>{movie.genre.name}</td>
+                  <td>{movie.numberInStock}</td>
+                  <td key={movie.id}>{movie.dailyRentalRate}</td>
+                  <td>
+                    <span onClick={() => this.handleLike(movie)}>
+                      <FontAwesomeIcon
+                        style={{ cursor: "pointer" }}
+                        icon={movie.movieLiked === true ? faSHeart : faRHeart}
+                      />
+                    </span>
+                  </td>
+                  <td key={movie.id}>
+                    <button
+                      key={movie._id}
+                      onClick={() => this.handleDelete(movie._id)}
+                      className="btn btn-danger"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Pagination
+            totalItems={movies.length}
+            pageSize={pageSize}
+            onPgaeChange={this.handlePageChange}
+            currentPage={currentPage}
+          />
+        </div>
+      </div>
     );
   }
 }
-
-// class Movies extends Component {
-//   state = {
-//     movies: moviesList,
-//   };
-//   render() {
-//     return <h2>{this.state.movies.length}</h2>;
-//   }
-// }
 
 export default Movies;
