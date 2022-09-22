@@ -3,10 +3,11 @@ import { getMovies } from "../services/fakeMovieService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
-import { hover } from "@testing-library/user-event/dist/hover";
+import Pagination from "../common/Pagination";
 
 function Movies() {
   const [movies, setMovies] = useState(getMovies());
+  const [pageSize, setPageSize] = useState(4);
 
   const handleDelete = (id) => {
     let movieInDb = movies.find((m) => m._id === id);
@@ -21,6 +22,10 @@ function Movies() {
     // tempMovies[index] = { ...tempMovies[index] };
     tempMovies[index].movieLiked = !tempMovies[index].movieLiked;
     setMovies(tempMovies);
+  };
+
+  const handlePageChange = (page) => {
+    console.log(page);
   };
 
   if (movies.length === 0) {
@@ -52,7 +57,7 @@ function Movies() {
                   <span onClick={() => handleLike(movie)}>
                     <FontAwesomeIcon
                       style={{ cursor: "pointer" }}
-                      icon={movie.movieLiked == true ? faSHeart : faRHeart}
+                      icon={movie.movieLiked === true ? faSHeart : faRHeart}
                     />
                   </span>
                 </td>
@@ -69,6 +74,11 @@ function Movies() {
             ))}
           </tbody>
         </table>
+        <Pagination
+          totalItems={movies.length}
+          pageSize={pageSize}
+          onPgaeChange={handlePageChange}
+        />
       </React.Fragment>
     );
   }
