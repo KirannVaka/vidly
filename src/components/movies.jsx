@@ -3,8 +3,9 @@ import { getMovies } from "../services/fakeMovieService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
-import Pagination from "../common/Pagination";
+import Pagination from "../common/pagination";
 import { paginate } from "../utils/paginate";
+import ListGroups from "../common/listGroups";
 
 function Movies() {
   const [movies, setMovies] = useState(getMovies());
@@ -37,6 +38,7 @@ function Movies() {
   } else {
     return (
       <React.Fragment>
+        <ListGroups />
         {movies.length > 0 && (
           <h1> Showing {movies.length} movies in database.</h1>
         )}
