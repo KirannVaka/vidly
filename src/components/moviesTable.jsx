@@ -2,21 +2,20 @@ import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
+import TableHeader from "../common/tableHeader";
 
 class MoviesTable extends Component {
-  raiseSort = (path) => {
-    const sortColumn = { ...this.props.sortColumn };
-    if (sortColumn.path === path) {
-      sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";
-    } else {
-      sortColumn.path = path;
-      sortColumn.order = "asc";
-    }
-    this.props.onSort(sortColumn);
-  };
-
+  columns = [
+    { path: "title", label: "Title" },
+    { path: "genre.name", label: "Genre" },
+    { path: "numberInStock", label: "Stock" },
+    { path: "dailyRentalRate", label: "Rate" },
+    { path: "like" },
+    { path: "delete" },
+  ];
   render() {
-    const { moviesPaginated, onLike, onDelete } = this.props;
+    const { moviesPaginated, onLike, onDelete, onSort, sortColumn } =
+      this.props;
 
     if (moviesPaginated.length === 0) return <h1>There are no movies in DB</h1>;
 
@@ -27,22 +26,11 @@ class MoviesTable extends Component {
         )}
 
         <table className="table">
-          <thead>
-            <tr>
-              <th onClick={() => this.raiseSort("title")} scope="col">
-                Title
-              </th>
-              <th onClick={() => this.raiseSort("genre.name")} scope="col">
-                Genre
-              </th>
-              <th onClick={() => this.raiseSort("numberInStock")} scope="col">
-                Stock
-              </th>
-              <th onClick={() => this.raiseSort("dailyRentalRate")} scope="col">
-                Rate
-              </th>
-            </tr>
-          </thead>
+          <TableHeader
+            columns={this.columns}
+            onSort={onSort}
+            sortColumn={sortColumn}
+          />
           <tbody>
             {moviesPaginated.map((movie) => (
               <tr key={movie.id + movie.title}>
