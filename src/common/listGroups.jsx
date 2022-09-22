@@ -2,12 +2,20 @@ import React, { Component } from "react";
 import _ from "lodash";
 
 const ListGroups = (props) => {
+  const { items, onItemSelect } = props;
+  console.log(items);
   return (
     <ul className="list-group">
-      <li style={{ cursor: "pointer" }} className="list-group-item">
-        Genre
-      </li>
-      <li className="list-group-item">Genre</li>
+      {items.map((item) => (
+        <li
+          key={item.name}
+          style={{ cursor: "pointer" }}
+          className="list-group-item"
+          onClick={() => onItemSelect(item.name)}
+        >
+          {item.name}
+        </li>
+      ))}
     </ul>
   );
 };

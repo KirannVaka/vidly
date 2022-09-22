@@ -4,17 +4,21 @@ import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
 import Pagination from "../common/pagination";
 import { paginate } from "../utils/paginate";
-import { genres, getGenres } from "../services/fakeGenreService";
+import { getGenres } from "../services/fakeGenreService";
 import ListGroups from "../common/listGroups";
 import React, { Component } from "react";
 
 class Movies extends Component {
   state = {
-    movies: getMovies(),
+    movies: [],
     genres: [],
     pageSize: 4,
     currentPage: 1,
   };
+
+  componentDidMount() {
+    this.setState({ movies: getMovies(), genres: getGenres() });
+  }
 
   handleDelete = (id) => {
     let movie = this.state.movies.find((m) => m._id === id);
@@ -26,7 +30,7 @@ class Movies extends Component {
   };
 
   handleGenreSelect = (genre) => {
-    return null;
+    console.log(genre);
   };
 
   handleLike = (movie) => {
@@ -46,16 +50,16 @@ class Movies extends Component {
   };
 
   render() {
-    const { movies, handleGenreSelect, genres, pageSize, currentPage } =
-      this.state;
+    const { movies, genres, pageSize, currentPage } = this.state;
 
     const moviesPaginated = paginate(movies, currentPage, pageSize);
 
     if (movies.length === 0) return <h1>There are no movies in DB</h1>;
+
     return (
       <div className="row">
         <div className="col-2">
-          <ListGroups items={genres} onGenreSelect={handleGenreSelect} />
+          <ListGroups items={genres} onItemSelect={this.handleGenreSelect} />
         </div>
         <div className="col">
           {movies.length > 0 && (
