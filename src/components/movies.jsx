@@ -1,7 +1,5 @@
 import { getMovies } from "../services/fakeMovieService";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
-import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
+import MoviesTable from "./moviesTable";
 import Pagination from "../common/pagination";
 import { paginate } from "../utils/paginate";
 import { getGenres } from "../services/fakeGenreService";
@@ -18,7 +16,8 @@ class Movies extends Component {
   };
 
   componentDidMount() {
-    this.setState({ movies: getMovies(), genres: getGenres() });
+    const genres = [{ name: "All Genres" }, ...getGenres()];
+    this.setState({ movies: getMovies(), genres });
   }
 
   handleDelete = (id) => {
@@ -33,6 +32,7 @@ class Movies extends Component {
   handleGenreSelect = (genre) => {
     this.setState({
       selectedGenre: genre,
+      currentPage: 1,
     });
   };
 
@@ -55,9 +55,10 @@ class Movies extends Component {
   render() {
     const { movies, genres, pageSize, currentPage, selectedGenre } = this.state;
 
-    const filtered = selectedGenre
-      ? movies.filter((movie) => movie.genre._id === selectedGenre._id)
-      : movies;
+    const filtered =
+      selectedGenre && selectedGenre._id
+        ? movies.filter((movie) => movie.genre._id === selectedGenre._id)
+        : movies;
 
     const moviesPaginated = paginate(filtered, currentPage, pageSize);
 
@@ -65,7 +66,7 @@ class Movies extends Component {
 
     return (
       <div className="row">
-        <div className="col-3">
+        <div className="col-3 mt-5">
           <ListGroup
             items={genres}
             onItemSelect={this.handleGenreSelect}
@@ -73,47 +74,13 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          {movies.length > 0 && (
-            <h1> Showing {filtered.length} movies in database.</h1>
-          )}
-
-          <table className="table">
-            <thead>
-              <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Genre</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Rate</th>
-              </tr>
-            </thead>
-            <tbody>
-              {moviesPaginated.map((movie) => (
-                <tr key={movie.id + movie.title}>
-                  <td key={movie.title}>{movie.title}</td>
-                  <td key={movie.id + movie.genre}>{movie.genre.name}</td>
-                  <td>{movie.numberInStock}</td>
-                  <td key={movie.id}>{movie.dailyRentalRate}</td>
-                  <td>
-                    <span onClick={() => this.handleLike(movie)}>
-                      <FontAwesomeIcon
-                        style={{ cursor: "pointer" }}
-                        icon={movie.movieLiked === true ? faSHeart : faRHeart}
-                      />
-                    </span>
-                  </td>
-                  <td key={movie.id}>
-                    <button
-                      key={movie._id}
-                      onClick={() => this.handleDelete(movie._id)}
-                      className="btn btn-danger"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <MoviesTable
+            movies={movies}
+            count={filtered.length}
+            moviesPaginated={moviesPaginated}
+            onDelete={this.handleDelete}
+            onLike={this.handleLike}
+          />
           <Pagination
             totalItems={filtered.length}
             pageSize={pageSize}

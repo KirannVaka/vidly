@@ -2,21 +2,21 @@ import React, { Component } from "react";
 import _ from "lodash";
 
 const ListGroup = (props) => {
-  const { items, onItemSelect, valueProperty, tetxProperty, selectedItem } =
+  const { items, onItemSelect, valueProperty, textProperty, selectedItem } =
     props;
 
   return (
     <ul className="list-group">
       {items.map((item) => (
         <li
-          key={item[valueProperty]}
+          key={item[valueProperty] ? item[valueProperty] : "all"}
           style={{ cursor: "pointer" }}
           className={
             item == selectedItem ? "list-group-item active" : "list-group-item"
           }
           onClick={() => onItemSelect(item)}
         >
-          {item[tetxProperty]}
+          {item[textProperty]}
         </li>
       ))}
     </ul>
@@ -24,7 +24,7 @@ const ListGroup = (props) => {
 };
 
 ListGroup.defaultProps = {
-  tetxProperty: "name",
+  textProperty: "name",
   valueProperty: "_id",
 };
 
