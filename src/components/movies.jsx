@@ -8,6 +8,7 @@ import Pagination from "../common/Pagination";
 function Movies() {
   const [movies, setMovies] = useState(getMovies());
   const [pageSize, setPageSize] = useState(4);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleDelete = (id) => {
     let movieInDb = movies.find((m) => m._id === id);
@@ -25,7 +26,7 @@ function Movies() {
   };
 
   const handlePageChange = (page) => {
-    console.log(page);
+    setCurrentPage(page);
   };
 
   if (movies.length === 0) {
@@ -78,6 +79,7 @@ function Movies() {
           totalItems={movies.length}
           pageSize={pageSize}
           onPgaeChange={handlePageChange}
+          currentPage={currentPage}
         />
       </React.Fragment>
     );
