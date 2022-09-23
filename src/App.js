@@ -7,6 +7,7 @@ import NavBar from "./common/navBar";
 import Movies from "./components/movies";
 import "./App.css";
 import MovieForm from "./components/movieForm";
+import LoginForm from "./components/loginForm";
 
 function App(props) {
   return (
@@ -18,6 +19,7 @@ function App(props) {
           <Route path="/movies" component={Movies} />
           <Route path="/customers" component={Customers} />
           <Route path="/rentals" component={Rentals} />
+          <Route path="/login-form" component={LoginForm} />
           <Route path="/not-found" component={notFound} />
           <Redirect from="/" exact to="/movies"></Redirect>
           <Redirect to="/not-found"></Redirect>

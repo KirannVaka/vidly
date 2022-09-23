@@ -6,7 +6,7 @@ import Rentals from "../components/rentals";
 
 const NavBar = (props) => {
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav className="navbar px-4 navbar-expand-lg navbar-light bg-light">
       <Link to="/" className="navbar-brand">
         Vidly
       </Link>
@@ -36,6 +36,11 @@ const NavBar = (props) => {
           <li className="nav-item">
             <NavLink to="/rentals" className="nav-link">
               Rentals
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink to="/login-form" className="nav-link">
+              Login
             </NavLink>
           </li>
         </ul>

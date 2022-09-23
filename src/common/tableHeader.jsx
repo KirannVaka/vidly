@@ -2,16 +2,16 @@ import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
 
-const TableHeader = ({ columns, sortColumn }) => {
+const TableHeader = ({ columns, sortColumn, onSort }) => {
   const raiseSort = (path) => {
-    const sortColumn = { ...this.props.sortColumn };
-    if (sortColumn.path === path) {
-      sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";
+    const sortColumnClone = { ...sortColumn };
+    if (sortColumnClone.path === path) {
+      sortColumnClone.order = sortColumnClone.order === "asc" ? "desc" : "asc";
     } else {
-      sortColumn.path = path;
-      sortColumn.order = "asc";
+      sortColumnClone.path = path;
+      sortColumnClone.order = "asc";
     }
-    this.props.onSort(sortColumn);
+    onSort(sortColumnClone);
   };
 
   const renderSortIcon = (column) => {
