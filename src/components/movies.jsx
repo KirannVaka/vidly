@@ -6,6 +6,7 @@ import { getGenres } from "../services/fakeGenreService";
 import ListGroup from "../common/listGroups";
 import React, { Component } from "react";
 import _ from "lodash";
+import NavBar from "../common/navBar";
 
 class Movies extends Component {
   state = {
@@ -87,7 +88,9 @@ class Movies extends Component {
 
     const { totalCount, data: movies } = this.getPagedData();
 
-    if (totalCount === 0) return <p>There are no movies in DB</p>;
+    if (totalCount === 0) {
+      return <p>There are no movies in DB</p>;
+    }
 
     return (
       <div className="row">
@@ -99,7 +102,7 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          <h4> Showing {totalCount} movies in database.</h4>;
+          <h4> Showing {totalCount} movies in database.</h4>
           <MoviesTable
             moviesPaginated={movies}
             onDelete={this.handleDelete}
