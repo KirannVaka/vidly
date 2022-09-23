@@ -6,6 +6,7 @@ import notFound from "./components/notFound";
 import NavBar from "./common/navBar";
 import Movies from "./components/movies";
 import "./App.css";
+import MovieForm from "./components/movieForm";
 
 function App(props) {
   return (
@@ -13,6 +14,7 @@ function App(props) {
       <NavBar />
       <main className="container">
         <Switch>
+          <Route path="/movies/:id" component={MovieForm} />
           <Route path="/movies" component={Movies} />
           <Route path="/customers" component={Customers} />
           <Route path="/rentals" component={Rentals} />
