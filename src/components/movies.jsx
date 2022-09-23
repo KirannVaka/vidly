@@ -1,103 +1,125 @@
-import React, { useState } from "react";
 import { getMovies } from "../services/fakeMovieService";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart as faSHeart } from "@fortawesome/free-solid-svg-icons";
-import { faHeart as faRHeart } from "@fortawesome/free-regular-svg-icons";
+import MoviesTable from "./moviesTable";
 import Pagination from "../common/pagination";
 import { paginate } from "../utils/paginate";
-import ListGroups from "../common/listGroups";
+import { getGenres } from "../services/fakeGenreService";
+import ListGroup from "../common/listGroups";
+import React, { Component } from "react";
+import _ from "lodash";
+import NavBar from "../common/navBar";
 
-function Movies() {
-  const [movies, setMovies] = useState(getMovies());
-  const [pageSize, setPageSize] = useState(4);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const handleDelete = (id) => {
-    let movieInDb = movies.find((m) => m._id === id);
-    let tempMovies = [...movies];
-    tempMovies.splice(movies.indexOf(movieInDb), 1);
-    setMovies(tempMovies);
+class Movies extends Component {
+  state = {
+    movies: [],
+    genres: [],
+    pageSize: 4,
+    currentPage: 1,
+    sortColumn: { path: "title", order: "asc" },
   };
 
-  const handleLike = (movie) => {
-    const tempMovies = [...movies];
-    const index = tempMovies.indexOf(movie);
-    // tempMovies[index] = { ...tempMovies[index] };
-    tempMovies[index].movieLiked = !tempMovies[index].movieLiked;
-    setMovies(tempMovies);
+  componentDidMount() {
+    const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
+    this.setState({ movies: getMovies(), genres });
+  }
+
+  handleDelete = (id) => {
+    let movie = this.state.movies.find((m) => m._id === id);
+    let movies = [...this.state.movies];
+    movies.splice(movies.indexOf(movie), 1);
+    this.setState({
+      movies,
+    });
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  handleGenreSelect = (genre) => {
+    this.setState({
+      selectedGenre: genre,
+      currentPage: 1,
+    });
   };
 
-  const moviesPaginated = paginate(movies, currentPage, pageSize);
+  handleLike = (movie) => {
+    const movies = [...this.state.movies];
+    const index = movies.indexOf(movie);
+    movies[index] = { ...movies[index] };
+    movies[index].movieLiked = !movies[index].movieLiked;
+    this.setState({
+      movies,
+    });
+  };
 
-  if (movies.length === 0) {
-    return <h1>There are no movies in DB</h1>;
-  } else {
+  handleSort = (sortColumn) => {
+    this.setState({
+      sortColumn,
+    });
+  };
+
+  getPagedData = () => {
+    const {
+      movies: allMovies,
+      genres,
+      sortColumn,
+      pageSize,
+      currentPage,
+      selectedGenre,
+    } = this.state;
+
+    const filtered =
+      selectedGenre && selectedGenre._id
+        ? allMovies.filter((movie) => movie.genre._id === selectedGenre._id)
+        : allMovies;
+
+    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+
+    const moviesPaginated = paginate(sorted, currentPage, pageSize);
+
+    return { totalCount: filtered.length, data: moviesPaginated };
+  };
+
+  handlePageChange = (page) => {
+    this.setState({
+      currentPage: page,
+    });
+  };
+
+  render() {
+    const { genres, sortColumn, pageSize, currentPage, selectedGenre } =
+      this.state;
+
+    const { totalCount, data: movies } = this.getPagedData();
+
+    if (totalCount === 0) {
+      return <p>There are no movies in DB</p>;
+    }
+
     return (
-      <React.Fragment>
-        <ListGroups />
-        {movies.length > 0 && (
-          <h1> Showing {movies.length} movies in database.</h1>
-        )}
-
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">Title</th>
-              <th scope="col">Genre</th>
-              <th scope="col">Stock</th>
-              <th scope="col">Rate</th>
-            </tr>
-          </thead>
-          <tbody>
-            {moviesPaginated.map((movie) => (
-              <tr key={movie.id + movie.title}>
-                <td key={movie.title}>{movie.title}</td>
-                <td key={movie.id + movie.genre}>{movie.genre.name}</td>
-                <td>{movie.numberInStock}</td>
-                <td key={movie.id}>{movie.dailyRentalRate}</td>
-                <td>
-                  <span onClick={() => handleLike(movie)}>
-                    <FontAwesomeIcon
-                      style={{ cursor: "pointer" }}
-                      icon={movie.movieLiked === true ? faSHeart : faRHeart}
-                    />
-                  </span>
-                </td>
-                <td key={movie.id}>
-                  <button
-                    key={movie._id}
-                    onClick={() => handleDelete(movie._id)}
-                    className="btn btn-danger"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <Pagination
-          totalItems={movies.length}
-          pageSize={pageSize}
-          onPgaeChange={handlePageChange}
-          currentPage={currentPage}
-        />
-      </React.Fragment>
+      <div className="row">
+        <div className="col-3 mt-5">
+          <ListGroup
+            items={genres}
+            onItemSelect={this.handleGenreSelect}
+            selectedItem={selectedGenre}
+          />
+        </div>
+        <div className="col">
+          <h4> Showing {totalCount} movies in database.</h4>
+          <MoviesTable
+            moviesPaginated={movies}
+            onDelete={this.handleDelete}
+            onLike={this.handleLike}
+            onSort={this.handleSort}
+            sortColumn={sortColumn}
+          />
+          <Pagination
+            totalItems={totalCount}
+            pageSize={pageSize}
+            onPgaeChange={this.handlePageChange}
+            currentPage={currentPage}
+          />
+        </div>
+      </div>
     );
   }
 }
-
-// class Movies extends Component {
-//   state = {
-//     movies: moviesList,
-//   };
-//   render() {
-//     return <h2>{this.state.movies.length}</h2>;
-//   }
-// }
 
 export default Movies;
