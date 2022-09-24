@@ -17,12 +17,6 @@ class LoginForm extends Component {
     const schema = { [name]: this.schema[name] };
     const { error } = Joi.validate(obj, schema);
     return error ? error.details[0].message : null;
-    // if (name == "username") {
-    //   if (value.trim() === "") return "Username is required";
-    // }
-    // if (name == "password") {
-    //   if (value.trim() === "") return "Password is required";
-    // }
   };
 
   handleChnage = ({ currentTarget: input }) => {
@@ -100,7 +94,9 @@ class LoginForm extends Component {
             onChange={this.handleChnage}
             errors={errors.password}
           />
-          <button className="btn btn-primary my-2">Login</button>
+          <button disabled={this.validate()} className="btn btn-primary my-2">
+            Login
+          </button>
         </form>
       </div>
     );
