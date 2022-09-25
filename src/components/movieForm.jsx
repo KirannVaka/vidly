@@ -25,7 +25,7 @@ class MovieForm extends Form {
 
     const _id = this.props.match.params.id;
 
-    if (!_id || _id == "new") return console.log("returned");
+    if (!_id || _id == "new") return;
 
     if (!getMovie(_id)) return this.props.history.replace("/not-found");
 
@@ -58,8 +58,13 @@ class MovieForm extends Form {
   schema = {
     title: Joi.string().required().label("Username"),
     genre: Joi.string().required().label("Password"),
-    numberInStock: Joi.string().required().label("Name"),
-    dailyRentalRate: Joi.string().required().label("Name"),
+    numberInStock: Joi.number()
+      .integer()
+      .required()
+      .min(0)
+      .max(100)
+      .label("Stock"),
+    dailyRentalRate: Joi.number().required().min(0).max(10).label("Rate"),
   };
 
   doSubmit = () => {
