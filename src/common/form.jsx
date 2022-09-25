@@ -29,7 +29,7 @@ class Form extends Component {
     return errors;
   };
 
-  handleChnage = ({ currentTarget: input }) => {
+  handleChange = ({ currentTarget: input }) => {
     const errors = { ...this.state.errors };
     const errorMessage = this.validateProperty(input);
     if (errorMessage) errors[input.name] = errorMessage;
@@ -71,7 +71,7 @@ class Form extends Component {
         label={label}
         type={type}
         value={data[name]}
-        onChange={this.handleChnage}
+        onChange={this.handleChange}
         error={errors[name]}
       />
     );

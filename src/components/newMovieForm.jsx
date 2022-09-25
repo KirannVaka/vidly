@@ -21,6 +21,22 @@ class NewMovieForm extends Form {
   componentDidMount = () => {
     const genres = getGenres();
     this.setState({ genres });
+
+    console.log(this.props.match.params.id);
+  };
+
+  handleSelect = ({ currentTarget: input }) => {
+    const errors = { ...this.state.errors };
+    const errorMessage = this.validateProperty(input);
+    if (errorMessage) errors[input.name] = errorMessage;
+    else delete errors[input.name];
+
+    const data = { ...this.state.data };
+    data[input.name] = this.state.genres.find((g) => g.name === input.value);
+    this.setState({
+      data,
+      errors,
+    });
   };
 
   schema = {
@@ -58,7 +74,7 @@ class NewMovieForm extends Form {
               id="genre"
               type="text"
               value={this.state.data["genre"]}
-              onChange={this.handleChnage}
+              onChange={this.handleChange}
               error={this.state.errors["genre"]}
               className="form-control"
             >
