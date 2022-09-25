@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 const Input = ({ name, label, error, ...rest }) => {
   return (
@@ -11,7 +11,7 @@ const Input = ({ name, label, error, ...rest }) => {
           name={name}
           id={name}
           className="form-control"
-        />
+        ></input>
       </label>
       {error && <div className="alert alert-danger">{error}</div>}
     </div>
