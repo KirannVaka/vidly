@@ -3,43 +3,55 @@ import Form from "../common/form";
 import Joi from "joi-browser";
 import { getGenres } from "../services/fakeGenreService";
 import { saveMovie, getMovie } from "../services/fakeMovieService";
-import { Redirect } from "react-router-dom";
 
 class MovieForm extends Form {
   state = {
     data: {
-      _id: "",
       title: "",
-      genre: "",
+      genreId: "",
       numberInStock: "",
       dailyRentalRate: "",
-      genreId: "",
     },
-    genres: {},
+    genres: [],
     errors: {},
+  };
+
+  schema = {
+    _id: Joi.string(),
+    title: Joi.string().required().label("Title"),
+    genreId: Joi.string().required().label("Genre"),
+    numberInStock: Joi.number()
+      .integer()
+      .required()
+      .min(0)
+      .max(100)
+      .label("Number in Stock"),
+    dailyRentalRate: Joi.number().required().min(0).max(10).label("Rate"),
   };
 
   componentDidMount = () => {
     const genres = getGenres();
     this.setState({ genres });
 
-    const _id = this.props.match.params.id;
+    const movieId = this.props.match.params.id;
 
-    if (!_id || _id == "new") return;
+    if (movieId == "new") return;
 
-    if (!getMovie(_id)) return this.props.history.replace("/not-found");
+    const movie = getMovie(movieId);
+    if (!movie) return this.props.history.replace("/not-found");
 
-    const movie = getMovie(_id);
-
-    this.setState((state) => {
-      state.data._id = movie._id;
-      state.data.title = movie.title;
-      state.data.genre = movie.genre.name;
-      state.data.numberInStock = movie.numberInStock;
-      state.data.dailyRentalRate = movie.dailyRentalRate;
-      state.data.genreId = movie.genre._id;
-    });
+    this.setState({ data: this.mapToViewModel(movie) });
   };
+
+  mapToViewModel(movie) {
+    return {
+      _id: movie._id,
+      title: movie.title,
+      genreId: movie.genre._id,
+      numberInStock: movie.numberInStock,
+      dailyRentalRate: movie.dailyRentalRate,
+    };
+  }
 
   handleSelect = ({ currentTarget: input }) => {
     const errors = { ...this.state.errors };
@@ -55,63 +67,18 @@ class MovieForm extends Form {
     });
   };
 
-  schema = {
-    title: Joi.string().required().label("Username"),
-    genre: Joi.string().required().label("Password"),
-    numberInStock: Joi.number()
-      .integer()
-      .required()
-      .min(0)
-      .max(100)
-      .label("Stock"),
-    dailyRentalRate: Joi.number().required().min(0).max(10).label("Rate"),
-  };
-
   doSubmit = () => {
-    let movie = { ...this.state.data };
-    movie = this.destructureMovie(movie);
-    movie = saveMovie(movie);
-    console.log(movie);
-    return this.props.history.push("/");
-  };
-
-  destructureMovie = (movie) => {
-    const genre = this.state.genres.find((g) => g.name === movie.genre);
-    movie.genreId = genre["_id"];
-    return movie;
+    saveMovie(this.state.data);
+    this.props.history.push("/movies");
   };
 
   render() {
     return (
       <div>
-        <h1>New Movie Form</h1>
+        <h1>Movie Form</h1>
         <form onSubmit={this.handleSubmit}>
           {this.renderInput("title", "Title")}
-
-          <div className="form-group">
-            <label htmlFor="genre">Genre</label>
-            <select
-              autoFocus
-              name="genre"
-              id="genre"
-              type="text"
-              value={this.state.data["genre"]}
-              onChange={this.handleChange}
-              error={this.state.errors["genre"]}
-              className="form-control"
-            >
-              <option></option>
-              <option>Action</option>
-              <option>Comedy</option>
-              <option>Thriller</option>
-            </select>
-            {this.state.errors.genre && (
-              <div className="alert alert-danger">
-                {this.state.errors.genre}
-              </div>
-            )}
-          </div>
-
+          {this.renderSelect("genreId", "Genre", this.state.genres)}
           {this.renderInput("numberInStock", "Number in Stock", "number")}
           {this.renderInput("dailyRentalRate", "Rate", "number")}
           {this.renderButton("Submit")}
