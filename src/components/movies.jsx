@@ -7,6 +7,7 @@ import ListGroup from "../common/listGroups";
 import React, { Component } from "react";
 import _ from "lodash";
 import { Link, NavLink } from "react-router-dom";
+import Input from "../common/input";
 
 class Movies extends Component {
   state = {
@@ -15,6 +16,7 @@ class Movies extends Component {
     pageSize: 4,
     currentPage: 1,
     sortColumn: { path: "title", order: "asc" },
+    searchText: "",
   };
 
   componentDidMount() {
@@ -35,6 +37,7 @@ class Movies extends Component {
     this.setState({
       selectedGenre: genre,
       currentPage: 1,
+      searchText: "",
     });
   };
 
@@ -64,10 +67,18 @@ class Movies extends Component {
       selectedGenre,
     } = this.state;
 
-    const filtered =
+    let filtered =
       selectedGenre && selectedGenre._id
         ? allMovies.filter((movie) => movie.genre._id === selectedGenre._id)
         : allMovies;
+
+    filtered = this.state.searchText
+      ? allMovies.filter((movie) =>
+          new RegExp(this.state.searchText, "ig").test(movie.title)
+        )
+      : allMovies;
+
+    console.log(filtered);
 
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
 
@@ -82,15 +93,20 @@ class Movies extends Component {
     });
   };
 
+  handleSearch = ({ currentTarget: input }) => {
+    let selectedGenre = this.state.selectedGenre;
+    if (input) selectedGenre = "";
+    this.setState({
+      searchText: input.value,
+      selectedGenre,
+    });
+  };
+
   render() {
     const { genres, sortColumn, pageSize, currentPage, selectedGenre } =
       this.state;
 
     const { totalCount, data: movies } = this.getPagedData();
-
-    if (totalCount === 0) {
-      return <p>There are no movies in DB</p>;
-    }
 
     return (
       <div className="row">
@@ -109,6 +125,15 @@ class Movies extends Component {
           >
             New Movie
           </Link>
+          <Input
+            name="search"
+            label="search"
+            type="text"
+            placeHolder="Serach..."
+            value={this.state.searchText}
+            onChange={this.handleSearch}
+            error={null}
+          />
           <h4> Showing {totalCount} movies in database.</h4>
           <MoviesTable
             moviesPaginated={movies}
