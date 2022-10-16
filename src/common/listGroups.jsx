@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import _ from "lodash";
 
 const ListGroup = (props) => {
@@ -12,7 +12,7 @@ const ListGroup = (props) => {
           key={item[valueProperty]}
           style={{ cursor: "pointer" }}
           className={
-            item == selectedItem ? "list-group-item active" : "list-group-item"
+            item === selectedItem ? "list-group-item active" : "list-group-item"
           }
           onClick={() => onItemSelect(item)}
         >

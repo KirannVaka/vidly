@@ -69,7 +69,7 @@ class MovieForm extends Form {
 
   doSubmit = () => {
     saveMovie(this.state.data);
-    this.props.history.push("/movies");
+    this.props.history.push("/vidly/movies");
   };
 
   render() {
